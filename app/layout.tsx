@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 
 
@@ -15,8 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr">
-      <body className="flex flex-col items-center border">
+      <body className="flex flex-col items-center h-dvh">
         {children}
+        <ToastContainer position="top-center" autoClose={3000} theme="colored" />
       </body>
     </html>
   );

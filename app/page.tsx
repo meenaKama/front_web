@@ -4,10 +4,10 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="flex flex-col items-center min-h-screen bg-blue-300 w-full">
+    <main className="flex flex-col items-center bg-blue-300 w-full justify-center min-h-dvh overflow-hidden">
 
       {/* Partie mobile */}
-      <div className="flex lg:hidden flex-col items-center justify-center p-4">
+      <div className="flex lg:hidden flex-col items-center justify-center p-2 w-full">
         <div className="relative h-[150px] w-[150px] rounded-full overflow-hidden">
           <Image
             src="/assets/logo/meena.png"
