@@ -5,9 +5,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <main className="flex flex-col items-center bg-blue-300 w-full justify-center min-h-dvh overflow-hidden">
-
-      {/* Partie mobile */}
-      <div className="flex lg:hidden flex-col items-center justify-center p-2 w-full">
+      <div className="flex flex-col items-center justify-center p-2 w-full md:w-1/2">
         <div className="relative h-[150px] w-[150px] rounded-full overflow-hidden">
           <Image
             src="/assets/logo/meena.png"
@@ -28,11 +26,6 @@ export default function Home() {
           <Link href="/connexion" className="w-full flex items-center justify-center"><Button className="bg-white hover:bg-gray-200 w-3/4 rounded-2xl h-[40px] ">Connexion</Button></Link>
         </div>
 
-      </div>
-
-      {/* Partie desktop */}
-      <div className="hidden lg:block">
-        <h1 className="text-4xl font-bold">Meena desktop est en cours de production</h1>
       </div>
     </main>
   );
