@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
+import ButtonGoogle from "./components/ButtonGoogle";
 
 export default function Home() {
   return (
@@ -25,6 +26,8 @@ export default function Home() {
           <p className="text-white">Déjà membre ?</p>
           <Link href="/connexion" className="w-full flex items-center justify-center"><Button className="bg-white hover:bg-gray-200 w-3/4 rounded-2xl h-[40px] ">Connexion</Button></Link>
         </div>
+
+        <ButtonGoogle/>
 
       </div>
     </main>
