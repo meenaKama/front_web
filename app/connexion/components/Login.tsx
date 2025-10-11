@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { Url } from '@/lib/Url';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "react-toastify"
@@ -11,6 +12,9 @@ type Inputs = {
 }
 
 const Login = () => {
+
+    const router = useRouter();
+
     const {
         register,
         handleSubmit,
@@ -19,11 +23,14 @@ const Login = () => {
     } = useForm<Inputs>();
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         try {
-            const login = await axios.post(Url.login, data, {
+            await axios.post(Url.login, data, {
                 withCredentials: true,
-            })
-            console.log(login.data);
-            toast.success("Connexion réussie !")
+            });
+            toast.success("Connexion réussie !");
+
+            setTimeout(() => {
+                router.push("/dashboard")
+            }, 2000);
         } catch (error) {
             console.error(error)
             toast.error("Une erreur s'est produite lors de la connexion.")
