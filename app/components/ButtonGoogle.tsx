@@ -10,8 +10,8 @@ const ButtonGoogle = () => {
     }
 
     return (
-        <div className='mb-3.5 w-full flex items-center justify-center'>
-            <Button className='rounded-2xl lg:w-1/2 mx-auto hover:bg-slate-50 border' onClick={handleGoogleLogin}>
+        <div className='mb-3.5 w-full flex items-center justify-center mt-3.5'>
+            <Button className='rounded-2xl lg:w-1/2 mx-auto bg-blue-950 hover:bg-slate-50 border text-white' onClick={handleGoogleLogin}>
                 <FcGoogle />
                 Signin with Google
             </Button>
