@@ -1,8 +1,8 @@
 import { RootState } from "@/app/store";
 import { User } from "@/interface/user.interface";
-import { Url } from "@/lib/Url";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "@/lib/api";
+
 
 interface userState{
     user: User | null;
@@ -18,16 +18,49 @@ const initialState: userState = {
     error: null,
 };
 
-export const whoIsLog = createAsyncThunk("user/whoIsLog", async (): Promise<User> => {
+export const whoIsLog = createAsyncThunk<User, string | undefined, { state: RootState }>(
+    "user/whoIsLog", 
+    // Ajout de getState dans les arguments du thunk
+    async (tokenOverride: string | undefined, { rejectWithValue, getState }) => {
     
-    const userLoged: { data: User } =
-        await api.get(Url.whoIsLog, {
-        withCredentials: true,
-        });
-    
+        // 1. Détermine le token à utiliser :
+        //    - Utilise tokenOverride (passé lors du callback OAuth)
+        //    - OU utilise le token déjà présent dans le store (pour les appels de vérification)
+        const currentToken = tokenOverride || getState().user.accessToken;
 
-    return userLoged.data;
-})
+        if (!currentToken) {
+            // Si aucun token n'est disponible (ni override, ni dans le store), rejeter.
+            // Cela se produit si l'utilisateur n'est pas connecté.
+            return rejectWithValue("Access Token est manquant pour la vérification."); 
+        }
+        
+        try {
+            // 2. Appel API sécurisé
+            const response = await api.get('/connected', {
+                headers: {
+                    // Utilise le currentToken garanti non-null
+                    Authorization: `Bearer ${currentToken}`
+                }
+            }); 
+            
+            // 3. Vérification des données et typage
+            const rawUser = response.data as User; 
+            
+            if (!rawUser || !rawUser.id) {
+                // Si l'API renvoie 200 mais un corps vide/invalide, rejetez.
+                return rejectWithValue("Les données utilisateur sont vides.");
+            }
+                
+            // 4. Succès : renvoie l'objet User
+            return rawUser; 
+
+        } catch (error: any) {
+            // 5. Échec : Gère la réponse d'erreur de l'API
+            const errorMessage = error.response?.data?.message || error.message || "Erreur de validation de session.";
+            return rejectWithValue(errorMessage);
+        }
+    }
+);
 
 export const userSlice = createSlice({
     name: "user",
@@ -52,7 +85,7 @@ export const userSlice = createSlice({
             })
             .addCase(whoIsLog.fulfilled, (state, action) => {
                 state.status = "success";
-                state.user = action.payload;
+                state.user = action.payload!;
             })
             .addCase(whoIsLog.rejected, (state, action) => {
                 state.status = "failed";

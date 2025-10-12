@@ -3,6 +3,7 @@ import "./globals.css";
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import ReduxProvider from "@/lib/providers/ReduxProvider";
+import PersistantProvider from "@/lib/providers/PersistantProvider";
 
 
 
@@ -18,12 +19,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr">
-      <ReduxProvider>
-        <body className="flex flex-col items-center h-dvh">
-          {children}
-          <ToastContainer position="top-center" autoClose={3000} theme="colored" />
-        </body>
-      </ReduxProvider>
+
+      <body className="flex flex-col items-center h-dvh">
+        <ReduxProvider>
+          <PersistantProvider>
+            {children}
+            <ToastContainer position="top-center" autoClose={3000} theme="colored" />
+          </PersistantProvider>
+        </ReduxProvider>
+      </body>
+
     </html>
   );
 }

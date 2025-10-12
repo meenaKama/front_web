@@ -21,7 +21,7 @@ const OAuthCallbackPage = () => {
 
             // 2. Déclencher le chargement des données utilisateur
             // Cet appel utilise l'Access Token nouvellement stocké (et vérifie que le Refresh Token est posé)
-            dispatch(whoIsLog())
+            dispatch(whoIsLog(accessToken))
                 .unwrap() // Gère la promesse du thunk
                 .then(() => {
                     // 3. Rediriger vers le dashboard après succès
@@ -30,11 +30,11 @@ const OAuthCallbackPage = () => {
                 .catch(error => {
                     console.error("Échec de whoIsLog après OAuth:", error);
                     // Rediriger vers login en cas d'erreur
-                    router.replace('/login?error=oauth_profile_load_failed');
+                    router.replace('/');
                 });
         } else {
             // Pas de token dans l'URL (échec de l'OAuth)
-            router.replace('/login?error=oauth_failed');
+            router.replace('/');
         }
     }, [dispatch, router]);
 
