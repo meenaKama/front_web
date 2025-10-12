@@ -1,7 +1,9 @@
 "use client"
 import { Button } from '@/components/ui/button';
+import { setAccessToken } from '@/features/users/userSlice';
+import api from '@/lib/api';
+import { Dispatch } from '@/lib/hooks';
 import { Url } from '@/lib/Url';
-import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -14,6 +16,7 @@ type Inputs = {
 const Login = () => {
 
     const router = useRouter();
+    const dispatch = Dispatch();
 
     const {
         register,
@@ -23,9 +26,12 @@ const Login = () => {
     } = useForm<Inputs>();
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         try {
-            await axios.post(Url.login, data, {
+            const response = await api.post(Url.login, data, {
                 withCredentials: true,
             });
+            const accessToken  = response.data.data;
+
+            dispatch(setAccessToken(accessToken));
             toast.success("Connexion réussie !");
 
             setTimeout(() => {

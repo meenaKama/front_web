@@ -2,12 +2,11 @@ import { RootState } from "@/app/store";
 import { User } from "@/interface/user.interface";
 import { Url } from "@/lib/Url";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
-
+import api from "@/lib/api";
 
 interface userState{
     user: User | null;
-     accessToken: string | null;
+    accessToken: string | null;
     status: "idle" | "loading" | "success" | "failed";
     error: string | null;
 };
@@ -22,9 +21,10 @@ const initialState: userState = {
 export const whoIsLog = createAsyncThunk("user/login", async (): Promise<User> => {
     
     const userLoged: { data: User } =
-        await axios.get(Url.whoIsLog, {
+        await api.get(Url.whoIsLog, {
         withCredentials: true,
-    });
+        });
+    
 
     return userLoged.data;
 })

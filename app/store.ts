@@ -1,11 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
 import userReducer from "../features/users/userSlice";
+import { initializeApi } from '@/lib/api';
 
 export const store = configureStore({
   reducer: {
-    user:userReducer,
+    user: userReducer,
   },
-})
+});
+
+// 🚀 INITIALISATION DE L'API APRÈS LA CRÉATION DU STORE
+initializeApi(store.getState);
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>
