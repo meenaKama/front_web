@@ -18,7 +18,7 @@ const initialState: userState = {
     error: null,
 };
 
-export const whoIsLog = createAsyncThunk("user/login", async (): Promise<User> => {
+export const whoIsLog = createAsyncThunk("user/whoIsLog", async (): Promise<User> => {
     
     const userLoged: { data: User } =
         await api.get(Url.whoIsLog, {
