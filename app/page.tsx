@@ -1,55 +1,31 @@
 "use client"
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import Link from "next/link";
-import ButtonGoogle from "./components/ButtonGoogle";
-// import { useAuthCheck } from "@/lib/useAuthCheck";
-// import { Selector } from "@/lib/hooks";
-// import { selectUser } from "@/features/users/userSlice";
+import { useAuthGuard } from '@/lib/authGaurdHook';
+import React from 'react'
+import Menu from './components/menu/Menu';
+import Groupes from './components/groupe/Groupes';
 
-export default function Home() {
+const HomePage = () => {
+    // La page d'accueil est PROTÉGÉE (false)
+    const { user, status, isReady } = useAuthGuard(false);
 
-  // // 🔥 Déclenche la vérification de session
-  //   const { isLoading } = useAuthCheck(); 
-  //   const user = Selector(selectUser);
+    // Si la vérification est en cours
+    if (!isReady || status === 'loading') {
+        return <div className="text-center p-10">Chargement de la session...</div>;
+    }
 
-  //   // Si la vérification est en cours OU si la vérification s'est terminée mais que le user est présent (redirection imminente)
-  //   if (isLoading || user) {
-  //       // Ceci remplace l'affichage "Authentification en cours"
-  //       return (
-  //           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-  //               <p>Authentification en cours...</p>
-  //               {/* Ajoutez un spinner si vous en avez un */}
-  //           </div>
-  //       );
-  //   }
- 
+    // Si on est 'failed' et qu'on est sur cette page, useAuthGuard nous redirige.
 
-  return (
-    <main className="flex flex-col items-center bg-blue-300 w-full justify-center min-h-dvh overflow-hidden">
-      <div className="flex flex-col items-center justify-center p-2 w-full md:w-1/2">
-        <div className="relative h-[150px] w-[150px] rounded-full overflow-hidden">
-          <Image
-            src="/assets/logo/meena.png"
-            alt="Meena Logo"
-            fill
-            className="object-contain"
-          />
-        </div>
-        <h1 className="text-7xl font-bold">MEENA</h1>
-        <p className="mb-32">Intelligent social network</p>
+    // Si on arrive ici, l'utilisateur est présent  
 
-        <p className="text-white mb-10 text-center">Notre histoire commence ici : Rejoins notre communauté et ouvre la porte à de nouvelles possibilités.</p>
 
-        <Link href="/inscription" className="w-full flex items-center justify-center"><Button className="bg-blue-950 hover:bg-blue-700 text-white mb-10 rounded-2xl h-[40px] w-3/4">Créer un nouveau compte</Button></Link>
-        <div className="flex flex-col items-center w-full gap-1.5">
-          <p className="text-white">Déjà membre ?</p>
-          <Link href="/connexion" className="w-full flex items-center justify-center"><Button className="bg-white hover:bg-gray-200 w-3/4 rounded-2xl h-[40px] ">Connexion</Button></Link>
-        </div>
 
-        <ButtonGoogle />
-
-      </div>
-    </main>
-  );
+    return (
+        <section className='flex flex-row w-full min-h-dvh border items-center'>
+            <Menu />
+            <Groupes/>
+            HomePage
+        </section>
+    )
 }
+
+export default HomePage;

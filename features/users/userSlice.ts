@@ -62,6 +62,17 @@ export const whoIsLog = createAsyncThunk<User, string | undefined, { state: Root
     }
 );
 
+// Déconnexion et invalidation du token serveur
+export const logoutAndInvalidate = createAsyncThunk<void, void, { state: RootState }>(
+    'user/logoutAndInvalidate',
+    async (_, { dispatch}) => {
+       
+         // 1. Nettoyage local forcé via l'action Redux simple
+        // Cela vide state.user et state.accessToken, forçant redux-persist à vider le LocalStorage.
+        dispatch(userSlice.actions.logout()); 
+    }
+);
+
 export const userSlice = createSlice({
     name: "user",
     initialState,

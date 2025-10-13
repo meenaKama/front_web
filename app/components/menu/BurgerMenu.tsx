@@ -4,11 +4,12 @@ import { Selector } from '@/lib/hooks';
 import Image from "next/image"
 import React from 'react';
 import { RxHamburgerMenu } from "react-icons/rx";
+import DeconnectionButtion from '../DeconnectionButtion';
 
 const BurgerMenu = () => {
-    const user = Selector(selectUser);
+   // const user = Selector(selectUser);
 
-    console.log(user)
+    // console.log(user)
     return (
         <div>
             <Sheet>
@@ -17,13 +18,14 @@ const BurgerMenu = () => {
                     <SheetHeader>
                         <SheetTitle className='border-b-1'>
                             <div className=' relative rounded-full w-[80px] h-[80px] overflow-hidden'>
-                                <Image src={user!.avatar} alt="avatar" fill priority />
+                               user image
                             </div>
-                            {user!.secretName}
+                           user
                         </SheetTitle>
                         <SheetDescription>
                             This action cannot be undone. This will permanently delete your account
                             and remove your data from our servers.
+                            <DeconnectionButtion/>
                         </SheetDescription>
                     </SheetHeader>
                 </SheetContent>

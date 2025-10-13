@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { ToastContainer } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
 import ReduxProvider from "@/lib/providers/ReduxProvider";
 import PersistantProvider from "@/lib/providers/PersistantProvider";
+
+
 
 
 
@@ -17,14 +17,19 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+
+
+
   return (
     <html lang="fr">
 
-      <body className="flex flex-col items-center h-dvh">
+      <body className="flex flex-col items-center h-dvh w-full">
         <ReduxProvider>
           <PersistantProvider>
-            {children}
-            <ToastContainer position="top-center" autoClose={3000} theme="colored" />
+            <main className='flex flex-row w-full h-dvh'>
+              {children}
+            </main>
           </PersistantProvider>
         </ReduxProvider>
       </body>

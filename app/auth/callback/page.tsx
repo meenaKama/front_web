@@ -25,16 +25,16 @@ const OAuthCallbackPage = () => {
                 .unwrap() // Gère la promesse du thunk
                 .then(() => {
                     // 3. Rediriger vers le dashboard après succès
-                    router.replace('/dashboard');
+                    router.replace('/');
                 })
                 .catch(error => {
                     console.error("Échec de whoIsLog après OAuth:", error);
                     // Rediriger vers login en cas d'erreur
-                    router.replace('/');
+                    router.replace('/local');
                 });
         } else {
             // Pas de token dans l'URL (échec de l'OAuth)
-            router.replace('/');
+            router.replace('/local');
         }
     }, [dispatch, router]);
 
