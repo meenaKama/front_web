@@ -1,7 +1,7 @@
 "use client"
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { selectUser, selectUserStatus, whoIsLog, setAccessToken } from '@/features/users/userSlice';
+import { selectUser, selectUserStatus, whoIsLog, selectAccessToken } from '@/features/users/userSlice';
 import { Dispatch, Selector } from './hooks';
 
 // Ce hook gère la vérification de l'authentification et les redirections
@@ -11,7 +11,7 @@ export const useAuthGuard = (isPublicRoute: boolean) => {
     const router = useRouter();
     const user = Selector(selectUser);
     const status = Selector(selectUserStatus);
-    const accessToken = Selector(setAccessToken).payload; // On récupère le token aussi
+    const accessToken = Selector(selectAccessToken) as string; // On récupère le token aussi
 
     const isReady = status !== 'loading' && status !== 'idle'; // Le store a fini son premier cycle de vérification
 

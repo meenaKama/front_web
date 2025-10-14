@@ -65,11 +65,17 @@ export const whoIsLog = createAsyncThunk<User, string | undefined, { state: Root
 // Déconnexion et invalidation du token serveur
 export const logoutAndInvalidate = createAsyncThunk<void, void, { state: RootState }>(
     'user/logoutAndInvalidate',
-    async (_, { dispatch}) => {
-       
-         // 1. Nettoyage local forcé via l'action Redux simple
-        // Cela vide state.user et state.accessToken, forçant redux-persist à vider le LocalStorage.
-        dispatch(userSlice.actions.logout()); 
+    async (_, { dispatch,rejectWithValue}) => {
+       try {
+      // 1️⃣ Appeler l'API de logout (qui supprimera les cookies côté serveur)
+      await api.get('/logout', { withCredentials: true });
+
+      // 2️⃣ Nettoyage Redux après succès
+      dispatch(userSlice.actions.logout());
+    } catch (error: any) {
+      console.error("Erreur lors du logout :", error.response?.data || error.message);
+      return rejectWithValue(error.response?.data?.message || "Erreur de déconnexion");
+    }
     }
 );
 
@@ -111,6 +117,7 @@ export const userSlice = createSlice({
 export const selectUser = (state: RootState) => state.user.user;
 export const selectUserStatus = (state: { user: { status: userState["status"]; }; }) => state.user.status;
 export const selectUserError = (state: { user: { error: userState["error"]; }; }) => state.user.error;
+export const selectAccessToken = (state: RootState) => state.user.accessToken;
 export const { setAccessToken,logout } = userSlice.actions;
 
 
