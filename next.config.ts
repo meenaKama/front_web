@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/logo/**',
       },
+       {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '8080',
+        pathname: '/public/**',
+      },
     ],
   },
   /* config options here */

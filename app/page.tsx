@@ -6,7 +6,7 @@ import Groupes from './components/groupe/Groupes';
 
 const HomePage = () => {
     // La page d'accueil est PROTÉGÉE (false)
-    const { user, status, isReady } = useAuthGuard(false);
+    const {status, isReady } = useAuthGuard(false);
 
     // Si la vérification est en cours
     if (!isReady || status === 'loading') {
@@ -20,7 +20,7 @@ const HomePage = () => {
 
 
     return (
-        <section className='flex flex-row w-full min-h-dvh border items-center'>
+        <section className='flex flex-row w-full min-h-full border items-start'>
             <Menu />
             <Groupes/>
             HomePage
