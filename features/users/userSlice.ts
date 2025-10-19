@@ -42,9 +42,14 @@ export const whoIsLog = createAsyncThunk<User, string | undefined, { state: Root
                     Authorization: `Bearer ${currentToken}`
                 }
             }); 
+
+            //  Vérifie si le backend a bien renvoyé 200 et un vrai utilisateur
+            if (response.status !== 200 || !response.data || response.data.message) {
+                return rejectWithValue("Session invalide ou expirée.");
+            }
             
             // 3. Vérification des données et typage
-            const rawUser = response.data as User; 
+            const rawUser = response.data.data as User; 
             
             if (!rawUser || !rawUser.id) {
                 // Si l'API renvoie 200 mais un corps vide/invalide, rejetez.
