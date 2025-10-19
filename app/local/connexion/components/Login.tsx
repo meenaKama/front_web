@@ -63,11 +63,11 @@ const Login = () => {
 
         try {
             const response = await api.post(Url.login2fa,
-                { code: twoFACode,tempToken },
+                { code: twoFACode, tempToken },
                 { withCredentials: true }
             );
 
-            const accessToken = response.data.accessToken;
+            const accessToken = response.data.data;
             dispatch(setAccessToken(accessToken));
             toast.success("Double authentification réussie !");
             setIs2FAModalOpen(false);

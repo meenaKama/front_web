@@ -11,6 +11,7 @@ const Connexion = () => {
             src="/assets/logo/meena.png"
             alt="Meena Logo"
             fill
+            sizes="150px"
             className="object-contain"
             priority
 

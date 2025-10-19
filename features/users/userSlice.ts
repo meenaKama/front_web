@@ -26,8 +26,15 @@ export const whoIsLog = createAsyncThunk<User, string | undefined, { state: Root
         // 1. Détermine le token à utiliser :
         //    - Utilise tokenOverride (passé lors du callback OAuth)
         //    - OU utilise le token déjà présent dans le store (pour les appels de vérification)
-        const currentToken = tokenOverride || getState().user.accessToken;
+        let currentToken = tokenOverride || getState().user.accessToken;
 
+        let attempts = 0;
+        while (!currentToken && attempts < 5) {
+            await new Promise(res => setTimeout(res, 150)); // 150ms
+            currentToken = getState().user.accessToken;
+            attempts++;
+        }
+        
         if (!currentToken) {
             // Si aucun token n'est disponible (ni override, ni dans le store), rejeter.
             // Cela se produit si l'utilisateur n'est pas connecté.
@@ -97,6 +104,9 @@ export const userSlice = createSlice({
             state.status = "idle";
             state.error = null;
         },
+        setUser: (state, action: PayloadAction<User>) => {
+            state.user = action.payload
+        }
     },
 
     extraReducers: builder => {
@@ -122,8 +132,8 @@ export const userSlice = createSlice({
 export const selectUser = (state: RootState) => state.user.user;
 export const selectUserStatus = (state: { user: { status: userState["status"]; }; }) => state.user.status;
 export const selectUserError = (state: { user: { error: userState["error"]; }; }) => state.user.error;
-export const selectAccessToken = (state: RootState) => state.user.accessToken;
-export const { setAccessToken,logout } = userSlice.actions;
+export const selectAccessToken = (state: RootState) => state.user.accessToken;;
+export const { setAccessToken,logout,setUser } = userSlice.actions;
 
 
 

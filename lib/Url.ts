@@ -5,5 +5,8 @@ export const Url = {
 
     login2fa: baseUrl + "login2fa",
 
-    whoIsLog:baseUrl+"connected"
+    whoIsLog: baseUrl + "connected",
+    
+    //---------USER------------
+    updateUser : baseUrl + "users"
 }

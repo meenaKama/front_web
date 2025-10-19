@@ -2,7 +2,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import userReducer from "../features/users/userSlice";
 import { initializeApi } from '@/lib/api';
 import storage from 'redux-persist/lib/storage'; // localStorage
-import thunk from 'redux-thunk';
+
 import {
   persistStore,
   persistReducer,

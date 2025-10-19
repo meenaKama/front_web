@@ -5,7 +5,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 
 const PersistantProvider = ({ children }: Readonly<{ children: React.ReactNode; }>) => {
     return (
-        <PersistGate loading={null} persistor={persistor}>
+        <PersistGate loading={<div>Chargement de la session...</div>} persistor={persistor}>
             {children}
         </PersistGate>
     )

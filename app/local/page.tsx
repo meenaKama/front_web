@@ -5,7 +5,6 @@ import Link from "next/link";
 import ButtonGoogle from "./components/ButtonGoogle";
 
 
-
 export default function Home() {
 
   return (
@@ -16,6 +15,7 @@ export default function Home() {
             src="/assets/logo/meena.png"
             alt="Meena Logo"
             fill
+            sizes="150px"
             className="object-contain"
           />
         </div>

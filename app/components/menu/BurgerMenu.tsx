@@ -16,7 +16,8 @@ import Link from 'next/link';
 const BurgerMenu = () => {
     const user = Selector(selectUser);
 
-    console.log(user)
+    if(!user) return
+
     return (
         <div className='p-0 bg-gray-700 flex w-full items-start justify-center h-full '>
             <Sheet>
@@ -25,13 +26,13 @@ const BurgerMenu = () => {
                     <SheetHeader>
                         <SheetTitle className=' px-3.5'>
                             <div className='relative rounded-full w-[80px] h-[80px] overflow-hidden'>
-                                <Image src={user?.avatar as string} alt='photo de profil' fill priority />
+                                <Image src={user.avatar as string} alt='photo de profil' fill priority sizes='150px'/>
                             </div>
-                            <p>{user?.secretName}</p>
+                            <p>{user.secretName}</p>
                             <span className='flex w-full border-b-1'></span>
                         </SheetTitle>
                         <SheetDescription className='flex flex-col w-full items-center px-3.5'>
-                            <Link href={`/profil/${user?.id}`} className='flex items-center gap-3.5 w-full h-[40px] hover:font-bold'>
+                            <Link href={`/profil/${user.id}`} className='flex items-center gap-3.5 w-full h-[40px] hover:font-bold'>
                                 <span className='text-xl'><CgProfile /></span>
                                 <span>Mon profil</span>
                             </Link>
@@ -40,7 +41,7 @@ const BurgerMenu = () => {
                                 <span className='text-xl'><GrGroup /></span>
                                 <span>Nouveau groupe</span>
                             </Link>
-                            <Link href={`/contact/${user?.id}`} className='flex items-center gap-3.5 w-full h-[40px] hover:font-bold'>
+                            <Link href={`/contact/${user.id}`} className='flex items-center gap-3.5 w-full h-[40px] hover:font-bold'>
                                 <span className='text-xl'><RiContactsLine /></span>
                                 <span>Contacts</span>
                             </Link>
@@ -48,7 +49,7 @@ const BurgerMenu = () => {
                                 <span className='text-xl'><IoCallOutline /></span>
                                 <span>Appels</span>
                             </Link>
-                            <Link href={`/parametre/${user?.id}`} className='flex items-center gap-3.5 w-full h-[40px] hover:font-bold'>
+                            <Link href={`/parametre/${user.id}`} className='flex items-center gap-3.5 w-full h-[40px] hover:font-bold'>
                                 <span className='text-xl'><IoSettingsOutline /></span>
                                 <span>Paramètres</span>
                             </Link>
