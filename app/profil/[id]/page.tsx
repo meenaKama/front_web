@@ -17,6 +17,7 @@ const Profil = () => {
 
     const [openAvatarModal, setOpenAvatarModal] = useState<boolean>(false);
     const [openNomModal, setOpenNomModal] = useState<boolean>(false);
+    const [openTelModal, setOpenTelModal] = useState<boolean>(false);
     const [avatar, setAvatar] = useState<File | null>(null);
     const user = Selector(selectUser);
     const accessToken = Selector(selectAccessToken);
@@ -28,7 +29,11 @@ const Profil = () => {
 
     const handleChangeNom = () => {
         setOpenNomModal(!openNomModal)
-    }
+    };
+
+    const handleChangeTel = () => {
+        setOpenTelModal(!openTelModal)
+    };
 
     const handleAvatarSubmit = async () => {
         try {
@@ -62,7 +67,10 @@ const Profil = () => {
 
     const handleNomSubmit = async () => {
 
-    }
+    };
+    const handleTelSubmit = async () => {
+
+    };
 
 
     if (!user) return
@@ -116,9 +124,27 @@ const Profil = () => {
             )}
 
             {/* ------------------------------UPDATE TELEPHONE-------------------------------------------- */}
+            {openTelModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                    <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+                        <h2 className="text-lg font-bold mb-4">Modification du téléphone</h2>
+                        <p className="mb-2">Veuillez choisir un nouveau numéro :</p>
+                        <input
+                            type="text"
+                            onChange={(e) => e.target.value}
+                            className="border p-2 text-center mb-4 w-full"
+                        />
+                        <div className="flex justify-center gap-2">
+                            <Button onClick={handleTelSubmit}>Valider</Button>
+                            <Button onClick={() => setOpenTelModal(false)} variant="outline">
+                                Annuler
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
-
-
+            {/* ------------*******------------------------*/}
 
             <div className='flex flex-col w-full min-h-full items-start'>
                 <h1 className='flex items-center m-3.5 gap-3.5'>
@@ -154,14 +180,14 @@ const Profil = () => {
                             <span>Nom affiché</span>
                             <span className='flex gap-3.5' onClick={handleChangeNom}>
                                 {user.secretName}
-                                <BsPencilSquare />
+                                <BsPencilSquare className='transition duration-300 ease-in-out hover:scale-110 hover:text-red-500 hover:cursor-pointer' />
                             </span>
                         </p>
                         <p className='flex gap-3.5 items-center w-full justify-between p-3.5'>
                             <span>MID</span>
                             <span className='flex gap-3.5'>
                                 {user.id}
-                                <BsCopy />
+                                <BsCopy className='transition duration-300 ease-in-out hover:scale-110 hover:text-red-500 hover:cursor-pointer' />
                             </span>
                         </p>
                         <p className='flex gap-3.5 items-center w-full justify-between p-3.5'>
@@ -170,9 +196,9 @@ const Profil = () => {
                         </p>
                         <p className='flex gap-3.5 items-center w-full justify-between p-3.5'>
                             <span>Tél portable  </span>
-                            <span className='flex gap-3.5'>
+                            <span className='flex gap-3.5' onClick={handleChangeTel}>
                                 {user.phone}
-                                <BsPencilSquare />
+                                <BsPencilSquare className='transition duration-300 ease-in-out hover:scale-110 hover:text-red-500 hover:cursor-pointer' />
                             </span>
                         </p>
                         <p className='flex gap-3.5 items-center w-full justify-between p-3.5'>
