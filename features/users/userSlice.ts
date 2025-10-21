@@ -8,13 +8,15 @@ interface userState{
     user: User | null;
     accessToken: string | null;
     status: "idle" | "loading" | "success" | "failed";
+    ready:boolean,
     error: string | null;
 };
 
 const initialState: userState = {
     user: null,
-    accessToken:null,
+    accessToken: null,
     status: "idle",
+    ready: false,
     error: null,
 };
 
@@ -40,7 +42,6 @@ export const whoIsLog = createAsyncThunk<User, string | undefined, { state: Root
             // Cela se produit si l'utilisateur n'est pas connecté.
             return rejectWithValue("Access Token est manquant pour la vérification."); 
         }
-        
         try {
             // 2. Appel API sécurisé
             const response = await api.get('/connected', {
@@ -48,8 +49,8 @@ export const whoIsLog = createAsyncThunk<User, string | undefined, { state: Root
                     // Utilise le currentToken garanti non-null
                     Authorization: `Bearer ${currentToken}`
                 }
-            }); 
-
+            });
+            
             //  Vérifie si le backend a bien renvoyé 200 et un vrai utilisateur
             if (response.status !== 200 || !response.data || response.data.message) {
                 return rejectWithValue("Session invalide ou expirée.");
@@ -114,16 +115,19 @@ export const userSlice = createSlice({
             .addCase(whoIsLog.pending, state => {
                 state.status = "loading";
                 state.error = null;
+                state.ready = false;
             })
             .addCase(whoIsLog.fulfilled, (state, action) => {
                 state.status = "success";
                 state.user = action.payload!;
+                state.ready = true;
             })
             .addCase(whoIsLog.rejected, (state, action) => {
                 state.status = "failed";
                 state.user = null;
                 state.accessToken = null;
                 state.error = action.error.message as string;
+                state.ready = true;
             });
     }
 });

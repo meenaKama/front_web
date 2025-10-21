@@ -12,23 +12,27 @@ export const useAuthGuard = (isPublicRoute: boolean) => {
     const user = Selector(selectUser);
     const status = Selector(selectUserStatus);
     const accessToken = Selector(selectAccessToken) as string; // On récupère le token aussi
+    const ready  = Selector((state) => state.user.ready);
 
-    const isReady = status !== 'loading' && status !== 'idle'; // Le store a fini son premier cycle de vérification
-
+   
     // 1. Logique de vérification (lance le thunk si on n'a pas encore vérifié)
     useEffect(() => {
-        // Lance whoIsLog uniquement si on est au premier cycle (idle) ou si une tentative a échoué 
+        // Lance whoIsLog uniquement si on est au premier cycle (idle) ou si une tentative a échoué
         // et qu'un token est présent (l'état Redux est souvent re-monté)
+        if (!accessToken) {
+            return;
+        } 
         if (status === 'idle' || (status === 'failed' && accessToken)) {
             // Lance la vérification. Le thunk va chercher le token dans l'état Redux lui-même.
             dispatch(whoIsLog(accessToken) ); 
         }
-    }, [dispatch, status, accessToken]);
+    }, [dispatch, status, accessToken, ready]);
 
+    
 
     // 2. Logique de Redirection
     useEffect(() => {
-        if (!isReady) return; // Attendre que la vérification soit terminée (loading, success, ou failed)
+        if (!ready) return // Attendre que la vérification soit terminée (loading, success, ou failed)
 
         // Cas A : Rediriger l'utilisateur non connecté vers la page de connexion
         if (!isPublicRoute && !user && status === 'failed') {
@@ -37,13 +41,13 @@ export const useAuthGuard = (isPublicRoute: boolean) => {
         }
 
         // Cas B : Rediriger l'utilisateur connecté qui essaie d'accéder à la page de connexion
-        if (isPublicRoute && user) {
+        if (isPublicRoute && user && status === 'success') {
             console.log("Redirection: Utilisateur déjà connecté vers /");
             router.replace('/');
         }
         
-    }, [isReady, user, status, isPublicRoute, router]);
+    }, [user, status, isPublicRoute, router, ready]);
 
     // Retourne l'état de la session
-    return { user, status, isReady };
+    return { user, status, ready };
 };

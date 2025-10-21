@@ -6,10 +6,10 @@ import Groupes from './components/groupe/Groupes';
 
 const HomePage = () => {
     // La page d'accueil est PROTÉGÉE (false)
-    const {status, isReady } = useAuthGuard(false);
+    const {status, ready } = useAuthGuard(false);
 
     // Si la vérification est en cours
-    if (!isReady || status === 'loading') {
+    if (!ready || status === 'loading') {
         return <div className="text-center p-10">Chargement de la session...</div>;
     }
 
