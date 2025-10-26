@@ -4,14 +4,15 @@ import React from 'react'
 import { MdArrowBackIosNew, MdArrowForwardIos } from 'react-icons/md'
 import Image from 'next/image';
 import { Selector } from '@/lib/hooks';
-import { selectUser } from '@/features/users/userSlice';
+import { selectUser, selectUserSecret } from '@/features/users/userSlice';
 
 
 
 const ParametreUser = () => {
     const user = Selector(selectUser);
+    const userSecret = Selector(selectUserSecret);
 
-    if (!user) return
+    if (!user || !userSecret) return
 
 
     return (
@@ -28,9 +29,9 @@ const ParametreUser = () => {
                         <Image src={user.avatar} alt='avatar Profil' fill priority sizes='80px' className="object-contain" />
                     </div>
                     <div className='flex flex-col w-[70%]'>
-                        <p className='font-bold'>{user.secretName}</p>
-                        <p>MID : { }</p>
-                        <p>PID : { }</p>
+                        <p className='font-bold'>{user.name}</p>
+                        <p>MID : {userSecret.ID}</p>
+                        <p>PID : {user.id}</p>
                     </div>
                 </div>
             </section>
@@ -48,7 +49,7 @@ const ParametreUser = () => {
                     </p>
                     <MdArrowForwardIos size={25} />
                 </Link>
-                <Link href="" className='bg-gray-500 flex flex-row items-center justify-between w-[90%] rounded-3xl p-1.5 mb-3.5 transition duration-300 ease-in-out hover:scale-105 hover:font-bold'>
+                <Link href="/parametre/user/2Fa" className='bg-gray-500 flex flex-row items-center justify-between w-[90%] rounded-3xl p-1.5 mb-3.5 transition duration-300 ease-in-out hover:scale-105 hover:font-bold'>
                     <p className='flex gap-3.5 px-2.5'>
                         <span>Sécurité à 2 facteurs</span>
                     </p>

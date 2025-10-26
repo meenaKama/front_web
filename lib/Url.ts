@@ -8,5 +8,8 @@ export const Url = {
     whoIsLog: baseUrl + "connected",
     
     //---------USER------------
-    updateUser : baseUrl + "users"
+    updateUser: baseUrl + "users",
+    
+    //---------USER------------
+    updateUserSecret: baseUrl + "userSecrets"
 }

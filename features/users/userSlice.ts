@@ -1,12 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { RootState } from "@/app/store";
 import { User } from "@/interface/user.interface";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "@/lib/api";
+import { UserSecret } from "@/interface/userSecret.interface";
 
 
 interface userState{
     user: User | null;
-    accessToken: string | null;
+    userSecret:UserSecret|null,
+    accessToken: string;
     status: "idle" | "loading" | "success" | "failed";
     ready:boolean,
     error: string | null;
@@ -14,13 +17,14 @@ interface userState{
 
 const initialState: userState = {
     user: null,
-    accessToken: null,
+    userSecret:null,
+    accessToken: "",
     status: "idle",
     ready: false,
     error: null,
 };
 
-export const whoIsLog = createAsyncThunk<User, string | undefined, { state: RootState }>(
+export const whoIsLog = createAsyncThunk<{user:User,userSecret:UserSecret}, string | undefined, { state: RootState }>(
     "user/whoIsLog", 
     // Ajout de getState dans les arguments du thunk
     async (tokenOverride: string | undefined, { rejectWithValue, getState }) => {
@@ -55,11 +59,11 @@ export const whoIsLog = createAsyncThunk<User, string | undefined, { state: Root
             if (response.status !== 200 || !response.data || response.data.message) {
                 return rejectWithValue("Session invalide ou expirée.");
             }
-            
+            console.log(response.data.data)
             // 3. Vérification des données et typage
-            const rawUser = response.data.data as User; 
+            const rawUser = response.data.data ; 
             
-            if (!rawUser || !rawUser.id) {
+            if (!rawUser || !rawUser.user.id) {
                 // Si l'API renvoie 200 mais un corps vide/invalide, rejetez.
                 return rejectWithValue("Les données utilisateur sont vides.");
             }
@@ -96,18 +100,29 @@ export const userSlice = createSlice({
     name: "user",
     initialState,
     reducers: {
-        setAccessToken: (state, action: PayloadAction<string>) => {
-        state.accessToken = action.payload;
+        setAccessToken: (state, action: PayloadAction<string | { accessToken: string }>) => {
+            // Si on reçoit un objet { accessToken: "..." }, on extrait la valeur
+            if (typeof action.payload === "object" && "accessToken" in action.payload) {
+                state.accessToken = action.payload.accessToken;
+            } else {
+            // Sinon on prend la string directement
+                state.accessToken = action.payload;
+            }
         },
         logout: (state) => {
             state.user = null;
-            state.accessToken = null;
+            state.userSecret = null;
+            state.accessToken = "";
             state.status = "idle";
             state.error = null;
         },
         setUser: (state, action: PayloadAction<User>) => {
             state.user = action.payload
-        }
+        },
+        setUserSecret: (state, action: PayloadAction<UserSecret>) => {
+            state.userSecret = action.payload
+        },
+        
     },
 
     extraReducers: builder => {
@@ -119,13 +134,14 @@ export const userSlice = createSlice({
             })
             .addCase(whoIsLog.fulfilled, (state, action) => {
                 state.status = "success";
-                state.user = action.payload!;
+                state.user = action.payload.user;
+                state.userSecret = action.payload.userSecret;
                 state.ready = true;
             })
             .addCase(whoIsLog.rejected, (state, action) => {
                 state.status = "failed";
                 state.user = null;
-                state.accessToken = null;
+                state.accessToken = "";
                 state.error = action.error.message as string;
                 state.ready = true;
             });
@@ -134,10 +150,11 @@ export const userSlice = createSlice({
 
 
 export const selectUser = (state: RootState) => state.user.user;
+export const selectUserSecret = (state: RootState) => state.user.userSecret;
 export const selectUserStatus = (state: { user: { status: userState["status"]; }; }) => state.user.status;
 export const selectUserError = (state: { user: { error: userState["error"]; }; }) => state.user.error;
 export const selectAccessToken = (state: RootState) => state.user.accessToken;;
-export const { setAccessToken,logout,setUser } = userSlice.actions;
+export const { setAccessToken,logout,setUser,setUserSecret } = userSlice.actions;
 
 
 

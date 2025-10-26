@@ -29,9 +29,9 @@ const Parametre = () => {
                         <Image src={user.avatar} alt='avatar Profil' fill priority sizes='80px' className="object-contain" />
                     </div>
                     <div className='flex flex-col w-[70%]'>
-                        <p className='font-bold'>{user.secretName}</p>
+                        <p className='font-bold'>{user.name}</p>
                         <p>MID : { }</p>
-                        <p>PID : { }</p>
+                        <p>PID : {user.id }</p>
                     </div>
                 </div>
 

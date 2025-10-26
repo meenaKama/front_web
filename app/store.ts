@@ -49,7 +49,7 @@ export const persistor = persistStore(store);
 
 
 // 🚀 INITIALISATION DE L'API APRÈS LA CRÉATION DU STORE
-initializeApi(store.getState);
+initializeApi(store.dispatch,store.getState);
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>
