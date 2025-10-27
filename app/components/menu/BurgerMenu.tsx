@@ -16,7 +16,7 @@ import Link from 'next/link';
 const BurgerMenu = () => {
     const user = Selector(selectUser);
 
-    if(!user) return
+    if (!user) return
 
     return (
         <div className='p-0 bg-gray-700 flex w-full items-start justify-center h-full '>
@@ -25,10 +25,13 @@ const BurgerMenu = () => {
                 <SheetContent side='left' className='bg-white flex w-1/2'>
                     <SheetHeader>
                         <SheetTitle className=' px-3.5'>
-                            <div className='relative rounded-full w-[80px] h-[80px] overflow-hidden'>
-                                <Image src={user.avatar as string} alt='photo de profil' fill priority sizes='150px'/>
+                            <div className='flex items-center gap-3.5 py-1.5 '>
+                                <div className='relative rounded-full w-[60px] h-[60px] overflow-hidden'>
+                                    <Image src={user.avatar as string} alt='photo de profil' fill priority sizes='150px' />
+                                </div>
+                                <p>{user.name}</p>
                             </div>
-                            <p>{user.secretName}</p>
+
                             <span className='flex w-full border-b-1'></span>
                         </SheetTitle>
                         <SheetDescription className='flex flex-col w-full items-center px-3.5'>

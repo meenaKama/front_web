@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { RootState } from "@/app/store";
 import { User } from "@/interface/user.interface";
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAction, createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "@/lib/api";
 import { UserSecret } from "@/interface/userSecret.interface";
 
@@ -23,6 +23,9 @@ const initialState: userState = {
     ready: false,
     error: null,
 };
+
+export const userLoggedOut = createAction('user/globalLogout');
+
 
 export const whoIsLog = createAsyncThunk<{user:User,userSecret:UserSecret}, string | undefined, { state: RootState }>(
     "user/whoIsLog", 
@@ -52,7 +55,8 @@ export const whoIsLog = createAsyncThunk<{user:User,userSecret:UserSecret}, stri
                 headers: {
                     // Utilise le currentToken garanti non-null
                     Authorization: `Bearer ${currentToken}`
-                }
+                },
+                withCredentials:true,
             });
             
             //  Vérifie si le backend a bien renvoyé 200 et un vrai utilisateur
@@ -96,6 +100,7 @@ export const logoutAndInvalidate = createAsyncThunk<void, void, { state: RootSta
     }
 );
 
+
 export const userSlice = createSlice({
     name: "user",
     initialState,
@@ -115,6 +120,7 @@ export const userSlice = createSlice({
             state.accessToken = "";
             state.status = "idle";
             state.error = null;
+            state.ready = true;
         },
         setUser: (state, action: PayloadAction<User>) => {
             state.user = action.payload

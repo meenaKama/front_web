@@ -70,6 +70,24 @@ const TwoFa = () => {
         }
     }
 
+    const handleDisable2FA = async () => {
+        try {
+              const response = await api.patch("/2fa/desactivate2FA", { }, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                },
+                withCredentials: true,
+            });
+
+            dispatch(setUser(response.data.data));
+            toast.info("La double authentification a bien été désactivée");
+            
+        } catch (error) {
+            console.error("Erreur lors de la désactivation du 2FA :", error);
+            toast.error("Erreur lors de la désactivation du 2FA !");
+        }
+    }
+
     return (
         <>
             {/**-----------------Model QR Code-------------------------------------- */}
@@ -133,8 +151,8 @@ const TwoFa = () => {
                         <div className="flex items-center justify-between">
                             <span className="text-green-600 font-semibold">2FA activée ✅</span>
                             <button
-                                // onClick={disable2FA}
-                                className="text-red-500 underline text-sm"
+                                onClick={handleDisable2FA}
+                                className="text-red-500 underline text-sm hover:cursor-pointer hover:scale-105 hover:font-bold"
                             >
                                 Désactiver
                             </button>

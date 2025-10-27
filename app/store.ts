@@ -1,5 +1,6 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import userReducer from "../features/users/userSlice";
+import notificationReducer from "../features/notifications/notificationSlice";
 import { initializeApi } from '@/lib/api';
 import storage from 'redux-persist/lib/storage'; // localStorage
 
@@ -24,6 +25,7 @@ const persistConfig = {
 // 2. Combiner les reducers
 const rootReducer = combineReducers({
   user: userReducer,
+  notification:notificationReducer
   // ajoute d'autres reducers ici
 });
 
