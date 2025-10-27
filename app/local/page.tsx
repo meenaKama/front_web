@@ -24,7 +24,7 @@ export default function Home() {
 
         <p className="text-white mb-10 text-center">Notre histoire commence ici : Rejoins notre communauté et ouvre la porte à de nouvelles possibilités.</p>
 
-        <Link href="/inscription" className="w-full flex items-center justify-center"><Button className="bg-blue-950 hover:bg-blue-700 text-white mb-10 rounded-2xl h-[40px] w-3/4">Créer un nouveau compte</Button></Link>
+        <Link href="/local/inscription" className="w-full flex items-center justify-center"><Button className="bg-blue-950 hover:bg-blue-700 text-white mb-10 rounded-2xl h-[40px] w-3/4">Créer un nouveau compte</Button></Link>
         <div className="flex flex-col items-center w-full gap-1.5">
           <p className="text-white">Déjà membre ?</p>
           <Link href="/local/connexion" className="w-full flex items-center justify-center"><Button className="bg-white hover:bg-gray-200 w-3/4 rounded-2xl h-[40px] ">Connexion</Button></Link>

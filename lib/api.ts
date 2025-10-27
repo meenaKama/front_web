@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import { logout, setAccessToken } from "@/features/users/userSlice";
 
@@ -74,7 +75,7 @@ api.interceptors.response.use(
       // Si le refresh lui-même échoue, on déconnecte
       if (originalRequest.url?.includes("/refresh") && dispatchFunc) {
         dispatchFunc(logout());
-        window.location.href = "/local/connexion";
+        window.location.href = "/local";
       }
       return Promise.reject(error);
     }
@@ -114,7 +115,7 @@ api.interceptors.response.use(
 
         if (dispatchFunc) {
           dispatchFunc(logout());
-          window.location.href = "/local/connexion";
+          window.location.href = "/local";
         }
         return Promise.reject(err);
       } finally {

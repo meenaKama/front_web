@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 import { Button } from '@/components/ui/button';
 import { setAccessToken } from '@/features/users/userSlice';
 import api from '@/lib/api';
 import { Dispatch } from '@/lib/hooks';
-import { Url } from '@/lib/Url';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -31,7 +31,7 @@ const Login = () => {
     } = useForm<Inputs>();
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         try {
-            const response = await api.post(Url.login, data, {
+            const response = await api.post("/login", data, {
                 withCredentials: true,
             });
 
@@ -52,9 +52,9 @@ const Login = () => {
             setTimeout(() => {
                 router.push("/")
             }, 2000);
-        } catch (error) {
+        } catch (error: any) {
             console.error(error)
-            toast.error("Une erreur s'est produite lors de la connexion.")
+            toast.error(`${error.response.data.message}`)
         }
     }
 
@@ -62,7 +62,7 @@ const Login = () => {
         if (!tempToken) return;
 
         try {
-            const response = await api.post(Url.login2fa,
+            const response = await api.post("/login2fa",
                 { code: twoFACode, tempToken },
                 { withCredentials: true }
             );
@@ -105,7 +105,7 @@ const Login = () => {
             )}
 
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col items-center justify-center w-full md:w-1/3 h-full p-4">
-                <input type='email' placeholder='Entrez votre email' id="identifiant" autoComplete="off" {...register("email", { required: "Email obligatoire !" })} className='bg-white w-[90%] h-[40px] mb-4 text-center' />
+                <input type='email' placeholder='Entrez votre email' id="email" autoComplete="off" {...register("email", { required: "Email obligatoire !" })} className='bg-white w-[90%] h-[40px] mb-4 text-center' />
                 {errors.email && <span className='text-red-600'>{errors.email.message}</span>}
 
                 <input type='password' placeholder='Entrez votre mot de passe' id="password" autoComplete="off" {...register("password", { required: "Mot de passe obligatoire !" })} className='bg-white w-[90%] h-[40px] mb-4 text-center' />
@@ -113,7 +113,7 @@ const Login = () => {
 
 
                 <Button type="submit" className='bg-white text-black mt-4 w-[60%] shadow-lg shadow-black hover:bg-amber-50'>Connexion</Button>
-                <ToastContainer autoClose={2000} />
+                <ToastContainer autoClose={3000} />
             </form>
         </>
     )

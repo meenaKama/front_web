@@ -16,7 +16,7 @@ const DeconnectionButtion = () => {
         await dispatch(logoutAndInvalidate());
 
         // Redirection vers la page de connexion après que l'état Redux soit vidé.
-        router.replace('/local');
+        router.push('/local');
     };
 
     return (

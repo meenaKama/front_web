@@ -9,7 +9,6 @@ import { LiaMedalSolid } from "react-icons/lia";
 import { BsCopy } from "react-icons/bs";
 import { BsPencilSquare } from "react-icons/bs";
 import { Button } from '@/components/ui/button';
-import { Url } from '@/lib/Url';
 import api from '@/lib/api';
 import { toast, ToastContainer } from 'react-toastify';
 import { selectUserSecret } from '../../../features/users/userSlice';
@@ -58,7 +57,7 @@ const Profil = () => {
                 withCredentials: true
             });
 
-            dispatch(setUserSecret(response.data.data.updateUserData));
+            dispatch(setUserSecret(response.data.data));
             setOpenAvatarSecretModal(false)
             toast.success("Avatar mis à jour !");
         } catch (error) {

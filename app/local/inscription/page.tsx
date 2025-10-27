@@ -1,5 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
+import SignUp from './components/SignUp'
 
 
 const Inscription = () => {
@@ -12,11 +13,16 @@ const Inscription = () => {
             alt="Meena Logo"
             fill
             className="object-contain"
+            priority
+            sizes='150px'
 
           />
         </div>
 
-
+        <SignUp />
+        <p className="text-center text-sm mt-2 relative -bottom-1/3">
+          ⓒ Meena, Inc. Tous droits réservés.
+        </p>
       </div>
     </main>
   )
