@@ -21,8 +21,6 @@ const initialState: notificationState = {
 
 
 export const getNotification = createAsyncThunk("notification/requete", async (accesToken: string) => {
-    // const state = getState();
-    //const accesToken = selectAccessToken(state as RootState);
 
     if (!accesToken) {
         throw new Error("Access token not found. Cannot fetch notifications.");
@@ -57,6 +55,12 @@ export const notificationSlice = createSlice({
         removeNotification: (state, action: PayloadAction<string>) => {
             state.notification = state.notification.filter(n => n.id !== action.payload);
         },
+        setNotificationRead: (state, action: PayloadAction<string>) => {
+            const notif = state.notification.find(n => n.id === action.payload);
+            if (notif) {
+                notif.read = true
+            }
+        },
     },
 
     extraReducers: builder => {
@@ -84,7 +88,7 @@ export const selectNotification = (state: RootState) => state.notification.notif
 export const selectNotificationStatus = (state: { notification: { status: notificationState["status"]; }; }) => state.notification.status;
 export const selectNotificationError = (state: { notification: { error: notificationState["error"]; }; }) => state.notification.error;
 
-export const { addNotification, markAllAsRead, removeNotification } =
+export const { addNotification, markAllAsRead, removeNotification, setNotificationRead } =
     notificationSlice.actions;
 
 

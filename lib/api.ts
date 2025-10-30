@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 import { logout, setAccessToken } from "@/features/users/userSlice";
+import { toast } from "react-toastify";
 
 // --- Variables globales pour l'intercepteur ---
 let isRefreshing = false;
@@ -21,15 +22,15 @@ export const initializeApi = (dispatch: (action: any) => any, getState: () => an
 
 // Création de l'instance Axios
 const api: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080",
-  withCredentials: true, // ⚡ Important pour les cookies HttpOnly
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
 // -------------------------------------------------------------------------------------------
-// Fonction utilitaire : traite la file d’attente des requêtes bloquées pendant le refresh
+// Fonction utilitaire : traite la file d'attente des requêtes bloquées pendant le refresh
 // -------------------------------------------------------------------------------------------
 const processQueue = (error: any = null, token: string | null = null) => {
   failedQueue.forEach(prom => {
@@ -86,11 +87,11 @@ api.interceptors.response.use(
     // 3. Si aucun refresh n'est en cours → on le lance
     if (!isRefreshing) {
       isRefreshing = true;
-      console.log("⚠️ Access Token expiré — tentative de refresh...");
+      toast.info("⚠️ Access Token expiré — tentative de refresh...");
 
       try {
         const response = await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/refresh`,
+          `${process.env.NEXT_PUBLIC_API_URL}/refresh`,
           {},
           { withCredentials: true }
         );

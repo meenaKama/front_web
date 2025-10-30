@@ -19,7 +19,7 @@ import {
 const persistConfig = {
   key: 'root',    // clé dans localStorage
   storage,        // type de stockage (localStorage)
-  whitelist: ['user'], // seuls les reducers listés ici seront persistés
+  whitelist: ['user','notification'], // seuls les reducers listés ici seront persistés
 };
 
 // 2. Combiner les reducers
@@ -39,7 +39,7 @@ export const store = configureStore({
     getDefaultMiddleware({
       thunk: true,
       serializableCheck: {
-        // ⚡ Ici on ignore toutes les actions internes de redux-persist
+        // Ici on ignore toutes les actions internes de redux-persist
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }),

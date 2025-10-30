@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import ReduxProvider from "@/lib/providers/ReduxProvider";
 import PersistantProvider from "@/lib/providers/PersistantProvider";
-
-
+import SocketInitializer from "./components/SocketInitializer";
 
 
 
@@ -18,6 +17,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
 
+
+
+
   return (
     <html lang="fr">
 
@@ -25,6 +27,7 @@ export default function RootLayout({
         <ReduxProvider>
           <PersistantProvider>
             <main className='flex flex-row w-full h-dvh'>
+              <SocketInitializer />
               {children}
             </main>
           </PersistantProvider>

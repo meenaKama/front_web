@@ -1,11 +1,26 @@
 
-type NotificationType={
-    friend_request: "friend_request"; //nouvelle requete
-    friend_accept :"friend_accept"//Quand le demande est acceptée
-}
+type NotificationType="friend_request" |"friend_accept"
+
 
 type NotifiableType={
     friendship:"friendship"
+}
+
+
+interface NotificationMeta{
+  message: string;
+}
+
+interface Sender{
+  ID: string;
+  avatarSecret: string;
+  nameSecret: string;
+}
+
+interface Receiver{
+   ID: string;
+  avatarSecret: string;
+  nameSecret: string;
 }
 
 
@@ -20,4 +35,7 @@ export interface Notification {
   seenAt?: Date;
   receiverId: string;
   senderId: string;
+  meta: NotificationMeta;
+  sender: Sender;
+  receiver: Receiver;
 }

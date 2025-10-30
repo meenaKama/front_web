@@ -63,7 +63,6 @@ export const whoIsLog = createAsyncThunk<{user:User,userSecret:UserSecret}, stri
             if (response.status !== 200 || !response.data || response.data.message) {
                 return rejectWithValue("Session invalide ou expirée.");
             }
-            console.log(response.data.data)
             // 3. Vérification des données et typage
             const rawUser = response.data.data ; 
             

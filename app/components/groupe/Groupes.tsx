@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 import React, { useEffect, useState } from 'react';
 import Notification from '../notification/Notification';
@@ -8,28 +9,51 @@ import api from '@/lib/api';
 import { Friend } from '@/interface/friend.interface';
 import Image from "next/image";
 import Link from 'next/link';
+import { toast, ToastContainer } from 'react-toastify';
 
 const Groupes = () => {
   const router = useRouter();
   const [contact, setContact] = useState<Friend[]>([]);
-  const accesToken = Selector(selectAccessToken);
+  const accessToken = Selector(selectAccessToken);
 
 
   useEffect(() => {
+    if (!accessToken) {
+      return
+    }
     const getContact = async () => {
       const response = await api.get('/friends/list', {
         headers: {
-          Authorization: `Bearer ${accesToken}`
+          Authorization: `Bearer ${accessToken}`
         },
         withCredentials: true,
       });
-      console.log(response.data)
+      toast.info(response.data)
       setContact(response.data);
     };
 
     getContact()
 
-  }, [accesToken]);
+  }, [accessToken]);
+
+  const handleOpenChat = async (id: string) => {
+    try {
+      // on va chercher une conversation existante avec l'id
+      const conversation = await api.get(`/conversations/find/${id}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        withCredentials: true,
+      });
+      const conv = conversation.data.data;
+      console.log("✅ Conversation trouvée ou créée :", conv, id);
+      // on va ouvrir le chat avec cette conversation id en url
+      router.push(`/chat/${conv.id}`);
+
+    } catch (error: any) {
+      console.log("🟡 Pas une conversation, tentative de création :", error);
+    }
+
+
+  }
 
 
 
@@ -47,7 +71,7 @@ const Groupes = () => {
             <li
               key={friend.id}
               className="flex items-center p-2 rounded-lg w-full hover:bg-gray-100 cursor-pointer justify-start gap-2.5"
-              onClick={() => router.push(`/chat/${friend.id}`)}
+              onClick={() => handleOpenChat(friend.id)}
             >
               <div className='relative w-[60px] h-[60px] overflow-hidden rounded-full p-2 border'>
                 <Image
@@ -67,6 +91,7 @@ const Groupes = () => {
           ))}
         </ul>
       )}
+      <ToastContainer autoClose={2000} />
     </div>
   )
 }

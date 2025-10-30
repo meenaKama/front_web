@@ -8,7 +8,7 @@ import { IoIosNotifications } from "react-icons/io";
 const Notification = () => {
     const notifications = Selector(selectNotification);
 
-    console.log("voia les notifications : ", notifications)
+    console.log("voila les notifications : ", notifications)
 
     return (
         <div>

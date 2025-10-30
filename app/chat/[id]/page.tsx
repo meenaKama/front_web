@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Selector } from "@/lib/hooks";
-import { selectAccessToken, selectUser } from "@/features/users/userSlice";
+import { selectAccessToken, selectUserSecret } from "@/features/users/userSlice";
 import api from "@/lib/api";
-import { initSocket } from "@/lib/socket";
+import { getSocket } from "@/lib/socket";
 import { Socket } from "socket.io-client";
 import { UserSecret } from "@/interface/userSecret.interface";
 import { Message } from "@/interface/message.interface";
@@ -12,82 +13,48 @@ import Image from "next/image";
 import { MdArrowBackIos, MdPhone } from "react-icons/md";
 import { FaVideo } from "react-icons/fa";
 import Link from "next/link";
+import { findReceiver } from "@/lib/findReceiver";
 
 const imageUrl = "/assets/bg/bg_baobab.webp";
 
 export default function ChatPage() {
   const router = useRouter();
-  const { id } = useParams(); // ← universel
+  const { id } = useParams();
+  const conversationId = id as string;
   const accessToken = Selector(selectAccessToken);
-  const user = Selector(selectUser);
-
-  const [conversationId, setConversationId] = useState<string | null>(null);
-  const [friendId, setFriendId] = useState<string | null>(null); // 👈 on garde la vraie valeur du friendId
+  const userSecret = Selector(selectUserSecret)
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState("");
-  const [userSecret, setUserSecret] = useState<UserSecret | null>(null);
   const [friend, setFriend] = useState<UserSecret | null>(null);
-  const socket = useRef<Socket | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [hasScrolledInitially, setHasScrolledInitially] = useState(false);
 
-  /* ----------------- 1️⃣ Charger le userSecret ------------------ */
-  useEffect(() => {
-    if (!user || !accessToken) return;
-    (async () => {
-      const res = await api.post(
-        "/users",
-        { userId: user.id },
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-          withCredentials: true,
-        }
-      );
-      setUserSecret(res.data.data);
-    })();
-  }, [accessToken, user]);
 
-  /* ----------------- 2️⃣ Identifier si l'id est un friendId ou une conversationId ------------------ */
+  /* -----------------  Identifier si l'id est un friendId ou une conversationId ------------------ */
   useEffect(() => {
     if (!accessToken || !id) return;
 
-    const resolveConversation = async () => {
+    const fetchOrCreateConversation = async () => {
       try {
-        // On tente d'abord de charger les messages avec cet ID
+        // On essaie d'abord de charger les messages → si OK, c'est une conversation existante
         const response = await api.get(`/messages/${id}`, {
           headers: { Authorization: `Bearer ${accessToken}` },
           withCredentials: true,
         });
 
-        console.log("'cest une conversationId ? : ", response.status)
-        // ✅ Si la requête réussit, c'est bien une conversationId
-        if (response.status === 200) {
-          setConversationId(id as string);
-          return;
-        }
-      } catch (err) {
-        // ❌ Sinon, on considère que c'est un friendId et on crée la conversation
-        console.log("Création de la conversation pour friendId :", id);
-        const conv = await api.post(
-          "/conversations",
-          { friendId: id },
-          {
-            headers: { Authorization: `Bearer ${accessToken}` },
-            withCredentials: true,
-          }
-        );
-        const convId = conv.data.data.id;
+        const messages: Message[] = response.data.data;
+        const receiver = findReceiver(messages, userSecret?.ID as string);
+        if (receiver) setFriend(receiver)
 
-        console.log("creation de coversation : ", conv.data.data)
-
-        setConversationId(convId);
-        setFriendId(id as string); // on garde le vrai friendId pour les infos
-        router.replace(`/chat/${convId}`);
+      } catch (err: any) {
+        console.error("Erreur création ou récupération de la conversation :", err);
       }
+
     };
 
-    resolveConversation();
-  }, [accessToken, id, router]);
+    fetchOrCreateConversation();
+  }, [accessToken, id, router, userSecret?.ID]);
+
 
   /* ----------------- 3️⃣ Charger les messages ------------------ */
   useEffect(() => {
@@ -108,38 +75,23 @@ export default function ChatPage() {
     fetchMessages();
   }, [accessToken, conversationId]);
 
-  /* ----------------- 4️⃣ Récupérer les infos de l'ami ------------------ */
-  useEffect(() => {
-    const fetchFriend = async () => {
-      if (!accessToken || !friendId) return;
-      try {
-        const res = await api.post(
-          "/userSecrets/",
-          { userId: friendId },
-          {
-            headers: { Authorization: `Bearer ${accessToken}` },
-            withCredentials: true,
-          }
-        );
-        setFriend(res.data.data);
-      } catch (err) {
-        console.error("Erreur récupération ami :", err);
-      }
-    };
-    fetchFriend();
-  }, [accessToken, friendId]);
 
-  /* ----------------- 5️⃣ Socket ------------------ */
+  /* -----------------  Socket ------------------ */
   useEffect(() => {
+
     if (!accessToken || !conversationId) return;
-    socket.current = initSocket(accessToken);
 
-    socket.current.on("connect", () => {
-      socket.current?.emit("joinConversation", conversationId);
-    });
+    const socket = getSocket();
 
-    socket.current.on("newMessage", (data: Message) => {
+    if (!socket) return
+
+    console.log("on verra ce que donne socket : ", socket);
+
+    socket.emit("joinConversation", conversationId)
+
+    socket.on("newMessage", (data: Message) => {
       setMessages((prev) => {
+        console.log("📩 Message reçu par Socket.IO instantanément :", data); // Ajoutez ce log
         const exists = prev.some((m) => m.id === data.id);
         if (exists) return prev;
         return [...prev, data];
@@ -147,14 +99,24 @@ export default function ChatPage() {
     });
 
     return () => {
-      socket.current?.emit("leaveConversation", conversationId);
-      socket.current?.disconnect();
+      socket.emit("leaveConversation", conversationId);
+      socket.off("newMessage", (data: Message) => {
+        setMessages((prev) => {
+          console.log("📩 Message reçu par Socket.IO instantanément :", data); // Ajoutez ce log
+          const exists = prev.some((m) => m.id === data.id);
+          if (exists) return prev;
+          return [...prev, data];
+        });
+      });
     };
   }, [accessToken, conversationId]);
 
-  /* ----------------- 6️⃣ Envoi message ------------------ */
+  /* -----------------  Envoi message ------------------ */
   const sendMessage = async () => {
     if (!message.trim() || !conversationId) return;
+    setMessage("");
+
+
     try {
       await api.post(
         "/messages",
@@ -164,13 +126,12 @@ export default function ChatPage() {
           withCredentials: true,
         }
       );
-      setMessage("");
     } catch (error) {
       console.error("Erreur lors de l'envoi du message :", error);
     }
   };
 
-  /* ----------------- 7️⃣ Auto-scroll ------------------ */
+  /* -----------------  Auto-scroll ------------------ */
   useEffect(() => {
     if (messages.length === 0) return;
     messagesEndRef.current?.scrollIntoView({
@@ -183,14 +144,16 @@ export default function ChatPage() {
   if (!conversationId)
     return <div className="text-center p-10">Chargement du chat...</div>;
 
+
   return (
     <div className="max-w-md mx-auto flex flex-col h-screen w-full">
+      {/* ------- Header du chat ------- */}
       <h1 className="text-xl font-bold flex items-center w-full h-[70px] gap-3.5 border-b">
         <Link href="/" className="p-4">
           <MdArrowBackIos size={25} className="hover:text-2xl" />
         </Link>
         <div className="flex w-full items-center justify-end gap-3.5 p-4">
-          <p className="mr-3.5">{friend?.nameSecret || "Ami"}</p>
+          {friend && <p className="mr-3.5">{friend?.nameSecret}</p>}
           <p className="bg-gray-500 rounded-full w-[30px] h-[30px] items-center flex justify-center">
             <MdPhone />
           </p>
@@ -211,6 +174,7 @@ export default function ChatPage() {
         </div>
       </h1>
 
+      {/* ------- Zone des messages ------- */}
       <div
         className="relative border p-2 h-64 overflow-y-auto bg-cover bg-center rounded flex-grow"
         style={{ backgroundImage: `url(${imageUrl})` }}
@@ -218,17 +182,38 @@ export default function ChatPage() {
         <div className="absolute inset-0 bg-white/30 pointer-events-none" />
         <div className="relative z-10">
           {messages.length > 0 ? (
-            messages.map((m) => (
-              <div
-                key={m.id}
-                className={`my-1 p-2 max-w-[75%] rounded-lg ${m.senderId === userSecret?.ID
-                  ? "ml-auto bg-blue-500 text-white text-right"
-                  : "mr-auto bg-gray-200 text-black text-left"
-                  }`}
-              >
-                <p>{m.content}</p>
-              </div>
-            ))
+            messages.map((m, index) => {
+              const previous = messages[index - 1];
+              const isNewGroup = !previous || previous.senderId !== m.senderId;
+
+              return (
+                <div key={m.id} className={`mb-2 ${isNewGroup ? "mt-3" : ""}`}>
+                  {/* Affiche le nom uniquement quand le sender change */}
+                  {isNewGroup && (
+                    <p
+                      className={`text-sm font-semibold mb-1 ${m.senderId === userSecret?.ID
+                        ? "text-right text-blue-600"
+                        : "text-left text-blue-600"
+                        }`}
+                    >
+                      {m.senderId === userSecret?.ID
+                        ? ""
+                        : m.receiver?.nameSecret || friend?.nameSecret || "Inconnu"}
+                    </p>
+                  )}
+
+                  {/* Contenu du message */}
+                  <div
+                    className={`p-2 max-w-[75%] rounded-lg ${m.senderId === userSecret?.ID
+                      ? "ml-auto bg-blue-500 text-white text-right"
+                      : "mr-auto bg-gray-200 text-black text-left"
+                      }`}
+                  >
+                    <p>{m.content}</p>
+                  </div>
+                </div>
+              );
+            })
           ) : (
             <p className="text-gray-500 text-center">Aucun message</p>
           )}
@@ -236,6 +221,7 @@ export default function ChatPage() {
         </div>
       </div>
 
+      {/* ------- Input ------- */}
       <div className="flex gap-2 p-4">
         <input
           value={message}
@@ -254,4 +240,5 @@ export default function ChatPage() {
       </div>
     </div>
   );
-}
+
+};
