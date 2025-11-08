@@ -22,7 +22,6 @@ const Notification = () => {
 
     if (!notification) return
 
-    console.log("liste des notifications : ", notification);
 
     const handleAcceptFriend = async (id: string) => {
         try {
@@ -85,7 +84,7 @@ const Notification = () => {
                                     </div>
 
                                 </div>
-                                {notif.createdAt}
+                                {/* {notif.createdAt} */}
                             </div>
                             <div className='flex gap-3.5 hover:scale-125 relative'>
                                 <FcOk size={25} onClick={() => handleAcceptFriend(notif.id)} />

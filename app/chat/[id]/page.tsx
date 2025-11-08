@@ -6,7 +6,6 @@ import { Selector } from "@/lib/hooks";
 import { selectAccessToken, selectUserSecret } from "@/features/users/userSlice";
 import api from "@/lib/api";
 import { getSocket } from "@/lib/socket";
-import { Socket } from "socket.io-client";
 import { UserSecret } from "@/interface/userSecret.interface";
 import { Message } from "@/interface/message.interface";
 import Image from "next/image";

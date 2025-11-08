@@ -40,7 +40,7 @@ const BurgerMenu = () => {
                                 <span>Mon profil</span>
                             </Link>
                             <span className='flex w-full border-b-1'></span>
-                            <Link href="" className='flex items-center gap-3.5 w-full h-[40px] hover:font-bold'>
+                            <Link href="/groupe" className='flex items-center gap-3.5 w-full h-[40px] hover:font-bold'>
                                 <span className='text-xl'><GrGroup /></span>
                                 <span>Nouveau groupe</span>
                             </Link>

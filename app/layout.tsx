@@ -22,7 +22,11 @@ export default function RootLayout({
 
   return (
     <html lang="fr">
-
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#111111" />
+        <link rel="apple-touch-icon" href="/assets/logo/meena.png" />
+      </head>
       <body className="flex flex-col items-center h-dvh w-full">
         <ReduxProvider>
           <PersistantProvider>

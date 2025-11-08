@@ -1,0 +1,21 @@
+{
+  "name": "Meena",
+  "short_name": "Meena",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#111111",
+  "description": "Plateforme de Meena — explore, partage et connecte-toi.",
+  "icons": [
+    {
+      "src": "/assets/logo/meena.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/logo/meena.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

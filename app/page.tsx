@@ -6,7 +6,7 @@ import Groupes from './components/groupe/Groupes';
 import { Dispatch, Selector } from '@/lib/hooks';
 import { selectAccessToken } from '@/features/users/userSlice';
 import { addNotification, getNotification } from '@/features/notifications/notificationSlice';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast} from 'react-toastify';
 import { getSocket } from '@/lib/socket';
 
 
